@@ -30,33 +30,83 @@
 		<java.version>21</java.version>
 	</properties>
 	<dependencies>
+
+		<!-- PostgreSQL veritabanı sürücüsü — uygulama veritabanıyla bu kütüphane üzerinden iletişim kurar -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+
+		<!-- Spring Data JPA — veritabanı işlemleri (Entity, Repository) için gerekli -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+
+		<!-- Jackson — Java nesnelerini JSON formatına çevirir (API istekleri/yanıtları) -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
+
+		<!-- Spring Security — kimlik doğrulama ve yetkilendirme altyapısı -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+
+		<!-- Spring Web MVC — REST API endpoint'leri için gerekli -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
 
+		<!-- Lombok — getter/setter/constructor gibi tekrarlayan kodları otomatik üretir -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+
+		<!-- ===== YENİ EKLENEN BAĞIMLILIKLAR ===== -->
+
+		<!-- JWT API — JSON Web Token oluşturma ve doğrulama için temel arayüz -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.12.6</version>
+		</dependency>
+
+		<!-- JWT Uygulama — JWT API'nin gerçek implementasyonu -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.12.6</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- JWT Jackson — JWT token içindeki JSON verisini işlemek için -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>0.12.6</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Spring Mail — "Şifremi Unuttum" e-postası ve fizyoterapist onay bildirimleri için -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
+		<!-- Bean Validation — form alanlarını (@NotBlank, @Email, @Size vb.) doğrulamak için -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+		<!-- Test bağımlılıkları -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa-test</artifactId>

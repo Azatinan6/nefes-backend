@@ -1,0 +1,5 @@
+-- ============================================================
+-- Bu dosya artık kullanılmıyor.
+-- Admin hesabı DataInitializer.java üzerinden BCrypt ile oluşturuluyor.
+-- Bakınız: Config/DataInitializer.java
+-- ============================================================
