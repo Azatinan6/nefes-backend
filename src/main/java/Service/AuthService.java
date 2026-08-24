@@ -95,6 +95,11 @@ public class AuthService {
             throw new RuntimeException("Bu e-posta adresi zaten kayıtlı");
         }
 
+        // KVKK Kontrolü
+        if (request.getIsKvkkApproved() == null || !request.getIsKvkkApproved()) {
+            throw new RuntimeException("KVKK Aydınlatma Metni'ni onaylamanız gerekmektedir.");
+        }
+
         // Kullanıcı kaydını oluştur
         User user = new User();
         user.setFullName(request.getFullName());
@@ -103,6 +108,7 @@ public class AuthService {
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.ROLE_FIZYO);
         user.setStatus(Status.PENDING); // Admin onayı bekleniyor
+        user.setIsKvkkApproved(true);
 
         User savedUser = userRepository.save(user);
 
@@ -162,6 +168,11 @@ public class AuthService {
             throw new RuntimeException("Geçersiz kayıt tipi. Lütfen 'AILE' veya 'COCUK' seçin.");
         }
 
+        // KVKK Kontrolü
+        if (request.getIsKvkkApproved() == null || !request.getIsKvkkApproved()) {
+            throw new RuntimeException("KVKK Aydınlatma Metni'ni onaylamanız gerekmektedir.");
+        }
+
         // Kullanıcı kaydını oluştur
         User user = new User();
         user.setFullName(request.getFullName());
@@ -169,6 +180,7 @@ public class AuthService {
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setRole(userRole);
         user.setStatus(Status.ACTIVE); // Direkt aktif
+        user.setIsKvkkApproved(true);
 
         User savedUser = userRepository.save(user);
 

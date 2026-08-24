@@ -35,4 +35,8 @@ public class RegisterPatientRequest {
     // Kayıt tipi: "AILE" veya "COCUK" — frontend'den seçilir
     @NotBlank(message = "Kayıt tipi seçilmelidir")
     private String role;
+
+    // KVKK Onay durumu
+    @jakarta.validation.constraints.NotNull(message = "KVKK onayı zorunludur")
+    private Boolean isKvkkApproved;
 }

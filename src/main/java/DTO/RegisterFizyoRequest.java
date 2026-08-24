@@ -32,4 +32,8 @@ public class RegisterFizyoRequest {
 
     // Fizyoterapistin uzmanlık alanı (isteğe bağlı ama önerilir)
     private String specialization;
+
+    // KVKK Onay durumu
+    @jakarta.validation.constraints.NotNull(message = "KVKK onayı zorunludur")
+    private Boolean isKvkkApproved;
 }

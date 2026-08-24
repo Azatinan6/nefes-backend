@@ -56,6 +56,10 @@ public class User {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    // KVKK Aydınlatma Metni ve Açık Rıza onay durumu
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private Boolean isKvkkApproved = false;
+
     // Hesabın son güncellenme tarihi
     private LocalDateTime updatedAt;
 
