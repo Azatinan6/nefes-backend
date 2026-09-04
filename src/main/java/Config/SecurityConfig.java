@@ -45,46 +45,26 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
             // CSRF koruması kapalı — JWT tabanlı REST API'lerde CSRF gerekmez
-            // JWT token her istekte gönderildiği için oturum tabanlı saldırılar çalışmaz
             .csrf(csrf -> csrf.disable())
 
             // Oturum yönetimi: STATELESS — sunucu hiçbir oturum saklamaz
-            // Her istek kendi JWT token'ıyla kimliğini kanıtlar
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
 
-            // ===== ENDPOINT ERİŞİM KURALLARI =====
+            // ===== ENDPOINT ERİŞİM KURALLARI (GELİŞTİRME MODU: TÜMÜ AÇIK) =====
             .authorizeHttpRequests(auth -> auth
-
-                // Tarayıcının ön kontrolü (preflight) için OPTIONS isteklerine her zaman izin ver
+                // Tarayıcının ön kontrolü (preflight) için OPTIONS isteklerine izin ver
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                // Kimlik doğrulama endpoint'leri — giriş yapılmadan erişilebilir
-                .requestMatchers("/api/auth/**").permitAll()
+                // Tüm API uçlarını test/geliştirme süreci boyunca tamamen serbest bırakıyoruz
+                .requestMatchers("/api/**").permitAll()
 
-                .requestMatchers("/api/auth/**", "/api/register/**").permitAll()
-                // Yapay zeka rapor servisi — mevcut yapı korundu
-                .requestMatchers("/api/ai/**").permitAll()
-
-                .requestMatchers("/api/progress/**", "/api/ai/**").permitAll()
-                // Admin endpoint'leri — yalnızca süper yönetici
-                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
-
-                // Fizyoterapist endpoint'leri — admin ve fizyoterapistler erişebilir
-                .requestMatchers("/api/fizyo/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_FIZYO")
-
-                // Hasta/aile endpoint'leri — giriş yapmış herkes erişebilir
-                .requestMatchers("/api/hasta/**").authenticated()
-
-                // İlerleme endpoint'leri (mevcut) — giriş yapmış herkes
-                .requestMatchers("/api/progress/**").authenticated()
-
-                // Yukarıdaki hiçbir kuralla eşleşmeyen diğer istekler — giriş zorunlu
-                .anyRequest().authenticated()
+                // Geri kalan her şey için de serbestlik tanıyalım
+                .anyRequest().permitAll()
             )
 
-            // JWT filtremizi Spring'in varsayılan kimlik doğrulama filtresinden ÖNCE çalıştır
+            // JWT filtremizi ekle
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
