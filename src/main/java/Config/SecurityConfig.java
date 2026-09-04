@@ -66,6 +66,7 @@ public class SecurityConfig {
                 // Yapay zeka rapor servisi — mevcut yapı korundu
                 .requestMatchers("/api/ai/**").permitAll()
 
+                .requestMatchers("/api/progress/**", "/api/ai/**").permitAll()
                 // Admin endpoint'leri — yalnızca süper yönetici
                 .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
 
