@@ -63,6 +63,7 @@ public class SecurityConfig {
                 // Kimlik doğrulama endpoint'leri — giriş yapılmadan erişilebilir
                 .requestMatchers("/api/auth/**").permitAll()
 
+                .requestMatchers("/api/auth/**", "/api/register/**").permitAll()
                 // Yapay zeka rapor servisi — mevcut yapı korundu
                 .requestMatchers("/api/ai/**").permitAll()
 
