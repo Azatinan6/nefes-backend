@@ -4,29 +4,27 @@ import Service.AiReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/ai")
-@CrossOrigin(origins = "http://localhost:5173") 
+@CrossOrigin(origins = "*") 
 public class AiReportController {
 
     @Autowired
     private AiReportService aiReportService;
 
-    // 1. AİLE PANELİ İÇİN
+    // 1. AİLE PANELİ İÇİN (Gerçek Veri Entegrasyonu)
     @PostMapping("/generate-report")
     public ResponseEntity<String> generateReport(@RequestBody ReportRequest request) {
-        String aiReport = aiReportService.generateWeeklyReport(request.getChildName(), request.getWeeklyScores());
+        // Artık isim ve skor almıyoruz, sadece hastanın ID'sini servise yolluyoruz
+        String aiReport = aiReportService.generateWeeklyReportForUser(request.getUserId());
         return ResponseEntity.ok(aiReport);
     }
 
-    // 2. FİZYOTERAPİST PANELİ İÇİN (Gerçek Yapay Zeka Entegrasyonu)
+    // 2. FİZYOTERAPİST PANELİ İÇİN 
     @PostMapping("/generate-clinical-report")
     public ResponseEntity<String> generateClinicalReport(@RequestBody ClinicalReportRequest request) {
-        
-        // request objesinin içindeki verileri tek tek çıkarıp servise gönderiyoruz
         String aiReport = aiReportService.generateClinicalReport(
             request.getPatientName(),
             request.getAge(),
@@ -37,20 +35,18 @@ public class AiReportController {
             request.getLastModule(),
             request.getTotalTime()
         );
-        
         return ResponseEntity.ok(aiReport);
     }
 }
 
-// --- DTO (Data Transfer Object) Sınıfları ---
+// --- DTO Sınıfları ---
 
 class ReportRequest {
-    private String childName;
-    private Map<String, Integer> weeklyScores;
-    public String getChildName() { return childName; }
-    public void setChildName(String childName) { this.childName = childName; }
-    public Map<String, Integer> getWeeklyScores() { return weeklyScores; }
-    public void setWeeklyScores(Map<String, Integer> weeklyScores) { this.weeklyScores = weeklyScores; }
+    // Aile paneli isteği artık sadece userId taşıyor
+    private UUID userId;
+
+    public UUID getUserId() { return userId; }
+    public void setUserId(UUID userId) { this.userId = userId; }
 }
 
 class ClinicalReportRequest {
@@ -63,7 +59,6 @@ class ClinicalReportRequest {
     private String lastModule;
     private String totalTime;
 
-    // Getter ve Setter metodları
     public String getPatientName() { return patientName; }
     public void setPatientName(String patientName) { this.patientName = patientName; }
     public int getAge() { return age; }
