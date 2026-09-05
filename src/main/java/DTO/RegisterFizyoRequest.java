@@ -27,7 +27,7 @@ public class RegisterFizyoRequest {
     private String password;
 
     // Diploma veya lisans numarası — admin onay sürecinde doğrulama için
-    @NotBlank(message = "Lisans numarası boş olamaz")
+    // @NotBlank(message = "Lisans numarası boş olamaz")
     private String licenseNumber;
 
     // Fizyoterapistin uzmanlık alanı (isteğe bağlı ama önerilir)
