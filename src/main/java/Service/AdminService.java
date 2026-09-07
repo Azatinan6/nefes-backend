@@ -5,6 +5,8 @@ import Entity.User;
 import Entity.User.Role;
 import Entity.User.Status;
 import Repository.PhysiotherapistRepository;
+import Repository.PatientRepository;
+import Repository.UserProgressRepository;
 import Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,8 @@ public class AdminService {
 
     private final UserRepository userRepository;
     private final PhysiotherapistRepository physiotherapistRepository;
+    private final PatientRepository patientRepository;
+    private final UserProgressRepository userProgressRepository;
     private final EmailService emailService;
 
     /**
@@ -128,7 +132,7 @@ public class AdminService {
 
     /**
      * Kullanıcıyı sistemden siler.
-     * Uyarı: Bu işlem geri alınamaz. İlgili hasta ve ilerleme kayıtları da etkilenebilir.
+     * Veritabanı tutarlılığını korumak için kullanıcının rolüne göre alt kayıtlar (fizyo/hasta/skor) da temizlenir.
      * @param userId Silinecek kullanıcının ID'si
      */
     @Transactional
@@ -142,6 +146,18 @@ public class AdminService {
             throw new RuntimeException("Admin hesabı silinemez");
         }
 
+        // 1. Fizyoterapist ise Physiotherapist tablosundan sil
+        if (user.getRole() == Role.ROLE_FIZYO) {
+            physiotherapistRepository.findById(userId).ifPresent(physiotherapistRepository::delete);
+        }
+
+        // 2. Aile/Çocuk ise önce oyun skorlarını ve Patient kaydını sil
+        if (user.getRole() == Role.ROLE_AILE || user.getRole() == Role.ROLE_COCUK) {
+            userProgressRepository.deleteByUserId(userId);
+            patientRepository.findById(userId).ifPresent(patientRepository::delete);
+        }
+
+        // 3. Alt kayıtlar temizlendikten sonra asıl User'ı güvenle sil
         userRepository.delete(user);
     }
 

@@ -8,4 +8,6 @@ import java.util.UUID;
 public interface UserProgressRepository extends JpaRepository<UserProgress, Long> {
     
     List<UserProgress> findByUserId(UUID userId);
+    void deleteByUserId(UUID userId);
+
 }
