@@ -121,6 +121,14 @@ public class FizyoService {
             System.err.println("[UYARI] Şifre e-postası gönderilemedi: " + e.getMessage());
         }
 
+        // TERMINALE YAZDIR: Mail gitmese bile şifreyi buradan anında görebileceksiniz
+        System.out.println("\n==================================================");
+        System.out.println("🌿 YENİ HASTA / AİLE BAŞARIYLA EKLENDİ!");
+        System.out.println("👤 Ad Soyad   : " + dto.getFullName());
+        System.out.println("📧 E-posta    : " + dto.getEmail());
+        System.out.println("🔑 Şifre      : " + generatedPassword);
+        System.out.println("==================================================\n");
+
         return generatedPassword;
     }
 }
