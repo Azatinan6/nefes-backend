@@ -22,6 +22,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/api/admin")
+@CrossOrigin(origins = "*")
 @PreAuthorize("hasAuthority('ROLE_ADMIN')")  // Tüm endpoint'ler yalnızca Admin'e açık
 @RequiredArgsConstructor
 public class AdminController {
