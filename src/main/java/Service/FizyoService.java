@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Fizyoterapist Servisi — Fizyoterapist paneline özel işlemleri yönetir.
@@ -61,10 +60,10 @@ public class FizyoService {
 
     /**
      * Fizyoterapist tarafından yeni hasta (aile) ekler.
-     * Rastgele şifre üretip e-posta ile gönderir.
+     * Panelden girilen şifreyi doğrudan kullanır.
      * @param dto Yeni hasta bilgileri
      * @param fizyoEmail İşlemi yapan fizyoterapistin e-postası
-     * @return Üretilen şifre (test kolaylığı ve UI'da göstermek için)
+     * @return Kullanılan şifre
      */
     @Transactional
     public String addPatient(FizyoAddPatientDTO dto, String fizyoEmail) {
@@ -81,13 +80,17 @@ public class FizyoService {
             throw new RuntimeException("Hasta kapasiteniz dolmuştur (maksimum 40 hasta).");
         }
 
-        // 8 haneli rastgele bir şifre üret
-        String generatedPassword = UUID.randomUUID().toString().substring(0, 8);
+        // Panelden girilen şifreyi kontrol et ve al
+        if (dto.getPassword() == null || dto.getPassword().trim().isEmpty()) {
+            throw new RuntimeException("Lütfen hasta için bir şifre belirleyin.");
+        }
+        String rawPassword = dto.getPassword();
 
         User patientUser = new User();
         patientUser.setFullName(dto.getFullName());
         patientUser.setEmail(dto.getEmail());
-        patientUser.setPasswordHash(passwordEncoder.encode(generatedPassword));
+        // Panelden gelen şifreyi güvenli bir şekilde hashle
+        patientUser.setPasswordHash(passwordEncoder.encode(rawPassword));
         patientUser.setRole(Role.ROLE_AILE);
         patientUser.setStatus(Status.ACTIVE);
         
@@ -102,7 +105,7 @@ public class FizyoService {
             try {
                 patient.setDiagnosisType(Patient.DiagnosisType.valueOf(dto.getDiagnosisType().toUpperCase()));
             } catch (IllegalArgumentException e) {
-                // Geçersiz bir enum değeri gelirse null kalabilir veya karma olarak atanabilir
+                // Geçersiz bir enum değeri gelirse yoksay
             }
         }
         
@@ -114,21 +117,21 @@ public class FizyoService {
         fizyo.setPatientCount(fizyo.getPatientCount() + 1);
         physiotherapistRepository.save(fizyo);
 
-        // Aileye mail gönder
+        // Aileye mail gönder (Hata verse bile kayıt tamamlanır)
         try {
-            emailService.sendPatientCredentials(dto.getEmail(), dto.getFullName(), generatedPassword);
+            emailService.sendPatientCredentials(dto.getEmail(), dto.getFullName(), rawPassword);
         } catch (Exception e) {
             System.err.println("[UYARI] Şifre e-postası gönderilemedi: " + e.getMessage());
         }
 
-        // TERMINALE YAZDIR: Mail gitmese bile şifreyi buradan anında görebileceksiniz
+        // Terminale yazdır
         System.out.println("\n==================================================");
         System.out.println("🌿 YENİ HASTA / AİLE BAŞARIYLA EKLENDİ!");
         System.out.println("👤 Ad Soyad   : " + dto.getFullName());
         System.out.println("📧 E-posta    : " + dto.getEmail());
-        System.out.println("🔑 Şifre      : " + generatedPassword);
+        System.out.println("🔑 Şifre      : " + rawPassword);
         System.out.println("==================================================\n");
 
-        return generatedPassword;
+        return rawPassword;
     }
 }

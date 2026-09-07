@@ -7,6 +7,7 @@ import java.time.LocalDate;
 public class FizyoAddPatientDTO {
     private String fullName;
     private String email;
+    private String password; // Şifre alanı eklendi
     private String diagnosisType;
     private Integer gmfcsLevel;
     private LocalDate dateOfBirth;
