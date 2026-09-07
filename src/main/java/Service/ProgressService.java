@@ -8,6 +8,10 @@ import Repository.GameRepository;
 import Repository.UserProgressRepository;
 import Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -35,5 +39,10 @@ public class ProgressService {
 
         // 3. Veritabanına kaydet
         progressRepository.save(progress);
+    }
+    
+    public List<UserProgress> getUserProgress(UUID userId) {
+        // Repository üzerinden hastaya ait tüm oyun skorlarını liste halinde çeker
+        return progressRepository.findByUserId(userId); 
     }
 }
